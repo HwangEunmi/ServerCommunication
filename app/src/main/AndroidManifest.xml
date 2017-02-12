@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.communication.servercommunication">
+
+    <!-- [WebView, Http통신 Permission] // 인터넷 접속을 허가하는 권한을 부여 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme.NoActionBar">
+
+        <!-- 메인 액티비티 -->
+        <activity android:name=".activities.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- startActivityForResult로 메인 액티비티에 값을 보내는 액티비티 -->
+        <activity android:name=".activities.DActivity" />
+
+        <!-- 서버에서 POST방식으로 리스트 가져와서 뿌리는 액티비티(x-www-form-urlencoded 방식) -->
+        <activity android:name=".activities.BActivity" />
+
+        <!-- 서버에서 POST방식으로 내용 가져오는 액티비티 (form-data 방식) -->
+        <activity android:name=".activities.CActivity" />
+        <activity
+            android:name=".activities.ViewPagerActivity"
+            android:screenOrientation="portrait">
+
+        </activity>
+
+        <activity android:name=".activities.AActivity"/>
+    </application>
+
+</manifest>

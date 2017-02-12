@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?><!--웹뷰용 Activity-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_a"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.communication.servercommunication.activities.AActivity">
+
+    <!--액션바-->
+    <com.communication.servercommunication.view.SOSActionbar
+        android:id="@+id/view_actionbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:layout_marginLeft="120dp"
+        android:layout_marginTop="150dp"
+        android:gravity="center"
+        android:text="download"
+        android:id="@+id/btn_download"
+        android:layout_width="150dp"
+        android:layout_height="150dp" />
+
+</LinearLayout>

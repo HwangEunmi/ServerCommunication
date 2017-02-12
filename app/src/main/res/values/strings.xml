@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ServerCommunication</string>
+    <string name="guide_text">입력하는 곳</string>
+    <string name="guide_hint">이 곳에 값을 입력하세요...</string>
+</resources>
