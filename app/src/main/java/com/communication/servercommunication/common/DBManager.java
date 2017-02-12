@@ -5,12 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.text.TextUtils;
 import android.util.Log;
 
-import com.communication.servercommunication.MyApplication;
 import com.communication.servercommunication.model.DBData;
-import com.communication.servercommunication.model.SOSListData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,7 +78,7 @@ public class DBManager extends SQLiteOpenHelper {
      */
     /*boardSeq == ansim_info_seq*/
     public int insertSOSData(DBData data) {
-
+        Log.d("TEST", "insert");
         db = getWritableDatabase();
 
         ContentValues values = new ContentValues();

@@ -2,7 +2,6 @@ package com.communication.servercommunication.view;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +9,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.communication.servercommunication.MyApplication;
 import com.communication.servercommunication.R;
 import com.communication.servercommunication.activities.ViewPagerActivity;
 import com.communication.servercommunication.common.Constant;
@@ -25,8 +23,6 @@ import com.communication.servercommunication.model.SOSListData;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.communication.servercommunication.MyApplication.getContext;
-
 public class AView extends LinearLayout implements View.OnClickListener {
 
     private SOSActionbar mActionbar;
@@ -39,24 +35,26 @@ public class AView extends LinearLayout implements View.OnClickListener {
 
     private ViewPagerActivity mActivity;
 
-    public AView(Context context, ViewPagerActivity mActivity, DBManager mDBManger) {
+    private int dbSEQ = 0;
+
+    public AView(Context context, ViewPagerActivity mActivity) {
         super(context);
         this.inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.mActivity = mActivity;
-        this.mDBManger = mDBManger;
 
         init();
     }
 
     private void init() {
         inflater.inflate(R.layout.activity_a, this, true);
+        mDBManger = new DBManager(mActivity);
+        Log.d("TEST", "onCreate A");
 
         /* 액션바 셋팅 */
         mActionbar = (SOSActionbar)findViewById(R.id.view_actionbar);
         mActionbar.setActionbarTitle("AA Activity");
-        mActionbar.setNaviBack(MyApplication.getContext(), View.VISIBLE);
+        mActionbar.setNaviBack(mActivity, View.VISIBLE);
 
-        mDBManger = new DBManager(MyApplication.getContext());
         mBTNDownload = (Button)findViewById(R.id.btn_download);
         mBTNDownload.setOnClickListener(this);
     }
@@ -85,38 +83,37 @@ public class AView extends LinearLayout implements View.OnClickListener {
                             /* 해당 데이터가 DB에 존재하는지 검색 */
                             int[] tempInt = new int[request.data.size()];
 
-                            if (DBManager.getInstance(MyApplication.getContext()).getSOSData().getCount() < 0) {
+                            if (DBManager.getInstance(mActivity).getSOSData().getCount() < 0) {
                                 tempList = new ArrayList<>();
-                                tempList.addAll(DBManager.getInstance(MyApplication.getContext()).getSOSListData());
+                                tempList.addAll(DBManager.getInstance(mActivity).getSOSListData());
 
                             } else {
 
                                 for (int i = 0; i < request.data.size(); i++) {
                                     tempInt[i] = request.data.get(i).ansim_info_seq;
 
-                                    tempCursorValue = DBManager.getInstance(MyApplication.getContext())
+                                    tempCursorValue = DBManager.getInstance(mActivity)
                                                                .getKeywordSOSData(request.data.get(i).ansim_info_seq);
 
-                                    tempCursorValue.moveToFirst();
-
-                                    int ss = 0;
+//                                    tempCursorValue.moveToFirst();
 
                                     while (tempCursorValue.moveToNext()) {
-                                        ss =
+                                        dbSEQ =
                                            tempCursorValue.getInt(tempCursorValue.getColumnIndex(DBContract.SOSListItem.COLUMN_NAME_SOS_ANSIM_INFO_SEQ));
+
                                         break;
                                     }
 
-                                    if (ss != tempInt[i]) {
+                                    if (dbSEQ != tempInt[i]) {
                                         /* DB에 저장 */
                                         mDBManger.insertSOSData(request.data.get(i));
-                                        Log.d("TEST", ss + ", " + tempInt[i]);
+                                        Log.d("TEST", dbSEQ + ", " + tempInt[i]);
                                         count++;
                                     } else {
                                         Log.d("TEST", "SS");
                                     }
                                 }
-                                Toast.makeText(context, count + " 개의 데이터를 DB에 저장했습니다.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(mActivity, count + " 개의 데이터를 DB에 저장했습니다.", Toast.LENGTH_SHORT).show();
                             }
 
                         } else {
@@ -138,13 +135,9 @@ public class AView extends LinearLayout implements View.OnClickListener {
                     SOSListData.SOSListRequest request = (SOSListData.SOSListRequest)data.mDataClass;
                     if ("false".equals(request.isSuccess)) { // 실패한 경우
                         if (request.data != null) {
-                            Toast.makeText(MyApplication.getContext(),
-                                           String.valueOf(request.message),
-                                           Toast.LENGTH_SHORT)
-                                 .show();
-
+                          // 데이터 불러오기 실패
                         } else {
-                            Toast.makeText(MyApplication.getContext(), "불러올 데이터가 없습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mActivity, "불러올 데이터가 없습니다.", Toast.LENGTH_SHORT).show();
                             return data;
                         }
                     }
@@ -160,10 +153,9 @@ public class AView extends LinearLayout implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_download:
-                setDataList(MyApplication.getContext());
-                Toast.makeText(getContext(), "클릭", Toast.LENGTH_SHORT).show();
-                break;
+                setDataList(mActivity);
 
+                break;
         }
     }
 }

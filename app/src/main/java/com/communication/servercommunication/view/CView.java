@@ -3,37 +3,25 @@ package com.communication.servercommunication.view;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.communication.servercommunication.MyApplication;
 import com.communication.servercommunication.R;
-import com.communication.servercommunication.activities.CActivity;
 import com.communication.servercommunication.activities.ViewPagerActivity;
 import com.communication.servercommunication.common.Constant;
-import com.communication.servercommunication.common.DBContract;
-import com.communication.servercommunication.common.DBManager;
 import com.communication.servercommunication.common.HttpMultiProtocol;
 import com.communication.servercommunication.common.Utils;
 import com.communication.servercommunication.model.BaseData;
-import com.communication.servercommunication.model.DBData;
 import com.communication.servercommunication.model.SOSContentData;
-import com.communication.servercommunication.model.SOSListData;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class CView extends LinearLayout {
+public class CView extends LinearLayout{
 
     private SOSActionbar mActionbar;
 
@@ -63,12 +51,13 @@ public class CView extends LinearLayout {
 
     private LayoutInflater inflater;
 
-    private ViewPagerActivity activity;
+    private ViewPagerActivity mActivity;
 
-    public CView(Context context, ViewPagerActivity activity) {
+    public CView(Context context, ViewPagerActivity mActivity, int mBoardSeq) {
         super(context);
         this.inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.activity = activity;
+        this.mActivity = mActivity;
+        this.mBoardSeq = mBoardSeq;
 
         init();
     }
@@ -79,13 +68,8 @@ public class CView extends LinearLayout {
         /* 액션바 셋팅 */
         mActionbar = (SOSActionbar)findViewById(R.id.view_actionbar);
         mActionbar.setActionbarTitle("C Activity");
-        mActionbar.setNaviBack(MyApplication.getContext(), View.VISIBLE);
-
-        /* boardSeq를 가져옴 */
-        Activity activity = (Activity)MyApplication.getContext();
-        Intent intent = activity.getIntent();
-        mBoardSeq = intent.getIntExtra(Constant.INTENT_BOARDSEQ_FLAG, 0);
-        Log.d("TEST", "boardSeq: " + mBoardSeq);
+        mActionbar.setNaviBack(mActivity, View.VISIBLE);
+        Log.d("TEST", "onCreate C");
 
         mTvTitle = (TextView)findViewById(R.id.tv_title);
         mTvContent = (TextView)findViewById(R.id.tv_content);
@@ -93,27 +77,26 @@ public class CView extends LinearLayout {
         mIvTwoURL = (ImageView)findViewById(R.id.iv_two_url);
         mIvThreeURL = (ImageView)findViewById(R.id.iv_three_url);
         mTvShortKey = (TextView)findViewById(R.id.tv_short_key);
-
-        setDataContent();
-
-        /* 바로가기 버튼클릭시 해당 url창을 띄움(shortKey 필요) */
-        mTvShortKey.setOnClickListener(new View.OnClickListener() {
-
+        mTvShortKey.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent urlIntent = new Intent(Intent.ACTION_VIEW,
-                                              Uri.parse("https://sos.openit.co.kr/" + mShortKey + "/m/"));
+                Toast.makeText(mActivity, mActivity.shortKeyData+"", Toast.LENGTH_SHORT).show();
 
-                Activity activity = (Activity)MyApplication.getContext();
-                activity.startActivity(urlIntent);
+                Intent urlIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://sos.openit.co.kr/" + mActivity.shortKeyData + "/m/"));
+
+                mActivity.startActivity(urlIntent);
             }
         });
+
+        setDataContent();
     }
 
     /* 서버로부터 데이터를 가져오는 메소드 */
     private void setDataContent() {
+        Log.d("TEST", "c mBoardSeq: "+mBoardSeq);
         SOSContentData contentData =
-                                   new SOSContentData(Constant.METHOD_POST, Constant.GET_BOARD_CONTENT_URL, mBoardSeq);
+                                   new SOSContentData(Constant.METHOD_POST, Constant.GET_BOARD_CONTENT_URL, mActivity.shortKeyData);
         HttpMultiProtocol protocol = new HttpMultiProtocol(new Utils.NetworkCheckCallback() {
 
             @Override
@@ -136,7 +119,7 @@ public class CView extends LinearLayout {
                             /* ImageView 비우기 */
                             mIvOneURL.setImageDrawable(null);
 
-                            Glide.with(MyApplication.getContext())
+                            Glide.with(mActivity)
                                  .load(Constant.DEFAULT_SOS_URL + request.imgPath0)
                                  .into(mIvOneURL);
                         } else {
@@ -149,7 +132,7 @@ public class CView extends LinearLayout {
                             /* ImageView 비우기 */
                             mIvTwoURL.setImageDrawable(null);
 
-                            Glide.with(MyApplication.getContext())
+                            Glide.with(mActivity)
                                  .load(Constant.DEFAULT_SOS_URL + request.imgPath1)
                                  .into(mIvTwoURL);
                         } else {
@@ -162,7 +145,7 @@ public class CView extends LinearLayout {
                             /* ImageView 비우기 */
                             mIvThreeURL.setImageDrawable(null);
 
-                            Glide.with(MyApplication.getContext())
+                            Glide.with(mActivity)
                                  .load(Constant.DEFAULT_SOS_URL + request.imgPath2)
                                  .into(mIvThreeURL);
                         } else {
@@ -185,13 +168,9 @@ public class CView extends LinearLayout {
                     SOSContentData.SOSContentRequest request = (SOSContentData.SOSContentRequest)data.getmDataClass();
                     if ("false".equals(request.isSuccess)) { // 실패한 경우
                         if (request != null) {
-                            Toast.makeText(MyApplication.getContext(),
-                                           String.valueOf(request.message),
-                                           Toast.LENGTH_SHORT)
-                                 .show();
-
+                            // 데이터 불러오기 실패
                         } else {
-                            Toast.makeText(MyApplication.getContext(), "불러올 데이터가 없습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mActivity, "불러올 데이터가 없습니다.", Toast.LENGTH_SHORT).show();
                             return data;
                         }
                     }

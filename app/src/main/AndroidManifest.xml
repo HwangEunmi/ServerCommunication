@@ -25,7 +25,7 @@
         <activity android:name=".activities.DActivity" />
 
         <!-- 서버에서 POST방식으로 리스트 가져와서 뿌리는 액티비티(x-www-form-urlencoded 방식) -->
-        <activity android:name=".activities.BActivity" />
+        <activity android:name=".activities.BActivity"/>
 
         <!-- 서버에서 POST방식으로 내용 가져오는 액티비티 (form-data 방식) -->
         <activity android:name=".activities.CActivity" />

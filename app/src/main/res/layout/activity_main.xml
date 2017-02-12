@@ -4,6 +4,7 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     android:orientation="vertical"
     tools:context="com.communication.servercommunication.activities.MainActivity">
 
@@ -17,8 +18,18 @@
         android:id="@+id/btn_main"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_marginLeft="100dp"
+        android:layout_gravity="center"
         android:layout_marginTop="100dp"
-        android:text="MAIN" />
+        android:background="@drawable/img_main_into" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:text="Click"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
 
 </LinearLayout>

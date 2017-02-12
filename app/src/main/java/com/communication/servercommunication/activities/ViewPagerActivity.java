@@ -2,14 +2,14 @@ package com.communication.servercommunication.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.communication.servercommunication.MyApplication;
 import com.communication.servercommunication.R;
 import com.communication.servercommunication.adapter.ViewPagerAdapter;
 import com.communication.servercommunication.common.DBManager;
@@ -17,11 +17,9 @@ import com.communication.servercommunication.view.SOSActionbar;
 
 public class ViewPagerActivity extends Activity {
 
-    ViewPager pager;
+    private ViewPager pager;
 
-    ViewPagerAdapter mAdapter;
-
-    private DBManager mDBManger;
+    private ViewPagerAdapter mAdapter;
 
     private SOSActionbar mActionbar;
 
@@ -29,18 +27,21 @@ public class ViewPagerActivity extends Activity {
 
     private LinearLayout llIvTab;
 
+    public int shortKeyData = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_pager);
+
+        Log.d("TEST", "Main ShortKEy: :"+shortKeyData);
         pager = (ViewPager)findViewById(R.id.pager);
         mActionbar = (SOSActionbar)findViewById(R.id.view_actionbar);
 
-        mAdapter = new ViewPagerAdapter(ViewPagerActivity.this, mDBManger);
+        mAdapter = new ViewPagerAdapter(ViewPagerActivity.this);
         pager.setAdapter(mAdapter);
         pager.setCurrentItem(0); // 첫번째 페이지로 초기화
-        pager.setOffscreenPageLimit(3); // 3개의 페이지를 그려놓고 준비
-        mDBManger = new DBManager(MyApplication.getContext());
+        pager.setOffscreenPageLimit(2); // 양쪽에 유지되는 페이지수 설정
 
         ImageView ivOne = (ImageView)findViewById(R.id.iv_one);
         ImageView ivTwo = (ImageView)findViewById(R.id.iv_two);
@@ -73,6 +74,7 @@ public class ViewPagerActivity extends Activity {
                     if (position == i) {
                         // findViewWithTag : Tag로 뷰를 찾음 (단, Object.equals() 비교를 함)
                         llIvTab.findViewWithTag(i).setSelected(true);
+                        mAdapter.notifyDataSetChanged();
 
                     } else {
                         llIvTab.findViewWithTag(i).setSelected(false);
@@ -105,6 +107,7 @@ public class ViewPagerActivity extends Activity {
             while (i < 3) {
                 if (currentTag == i) {
                     llIvTab.findViewWithTag(i).setSelected(true);
+                    mAdapter.notifyDataSetChanged(); // 뷰 갱신(좋은 방법 아님)
                 }
 
                 else {
@@ -116,5 +119,4 @@ public class ViewPagerActivity extends Activity {
             pager.setCurrentItem(currentTag);
         }
     };
-
 }

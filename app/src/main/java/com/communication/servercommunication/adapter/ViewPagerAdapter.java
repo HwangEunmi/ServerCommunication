@@ -44,34 +44,27 @@ public class ViewPagerAdapter extends PagerAdapter {
 
     private ViewPagerActivity activity;
 
-    private DBManager mDBManager;
-
-    public ViewPagerAdapter(ViewPagerActivity activity, DBManager mDBManager) {
+    public ViewPagerAdapter(ViewPagerActivity activity) {
         this.activity = activity;
-        this.mDBManager = mDBManager;
     }
-
-    List<LinearLayout> scrapped = new ArrayList<>();
 
     @Override
     public Object instantiateItem(final ViewGroup container, int position) {
         View view = null;
 
-        if (scrapped.size() > 0) {
-            view = scrapped.remove(0);
+        if (position == 0) {
+            view = new AView(container.getContext(), activity);
 
+            container.addView(view);
+
+        } else if (position == 1) {
+            view = new BView(container.getContext(), activity);
+
+            container.addView(view);
         } else {
-            if (position == 0) {
-                view = new AView(container.getContext(), activity, mDBManager);
+            view = new CView(container.getContext(), activity, activity.shortKeyData);
 
-                container.addView(view);
-
-            } else if (position == 1) {
-
-            } else {
-                view = new BView(container.getContext(), activity);
-
-                container.addView(view);            }
+            container.addView(view);
         }
 
         return view;
@@ -81,7 +74,6 @@ public class ViewPagerAdapter extends PagerAdapter {
     public void destroyItem(ViewGroup container, int position, Object object) {
         View view = (View)object;
         container.removeView(view);
-        scrapped.add((LinearLayout)view);
     }
 
     @Override
@@ -99,4 +91,11 @@ public class ViewPagerAdapter extends PagerAdapter {
         return 1;
     }
 
+
+    /*뷰 갱신을 위한 메소드(notifyDataSetChanged();)
+     * But, 별로 좋은 방법은 아님 */
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
 }

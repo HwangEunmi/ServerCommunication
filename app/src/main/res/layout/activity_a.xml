@@ -5,21 +5,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@android:color/white"
     tools:context="com.communication.servercommunication.activities.AActivity">
 
     <!--액션바-->
     <com.communication.servercommunication.view.SOSActionbar
         android:id="@+id/view_actionbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
     <Button
-        android:layout_marginLeft="120dp"
-        android:layout_marginTop="150dp"
-        android:gravity="center"
-        android:text="download"
         android:id="@+id/btn_download"
         android:layout_width="150dp"
-        android:layout_height="150dp" />
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
+        android:background="@drawable/img_download"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:text="Download"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
 </LinearLayout>
